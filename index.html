@@ -265,7 +265,7 @@
     </header>
 
     <main class="container">
-        <!-- Authentication Section -->
+        
         <section id="auth-section" class="auth-forms">
             <div class="form-container">
                 <div class="tabs">
@@ -311,7 +311,6 @@
             </div>
         </section>
 
-        <!-- Registry Section (Hidden until logged in) -->
         <section id="registry-section" style="display: none;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin: 1rem 0;">
                 <h2>My Gift Registries</h2>
@@ -325,7 +324,7 @@
 
             <div id="registries" class="tab-content active">
                 <div id="registries-list">
-                    <!-- Registries will be added here dynamically -->
+                  
                 </div>
             </div>
 
@@ -340,13 +339,13 @@
                 </div>
 
                 <div class="registry-list" id="gift-list">
-                    <!-- Gift items will be added here dynamically -->
+                    
                 </div>
             </div>
         </section>
     </main>
 
-    <!-- Create Registry Modal -->
+ 
     <div id="create-registry-modal" class="modal">
         <div class="modal-content">
             <span class="close-modal">&times;</span>
@@ -393,7 +392,7 @@
         </div>
     </div>
 
-    <!-- Add Gift Modal -->
+    
     <div id="add-gift-modal" class="modal">
         <div class="modal-content">
             <span class="close-modal">&times;</span>
@@ -432,7 +431,6 @@
         </div>
     </div>
 
-    <!-- Share Modal -->
     <div id="share-modal" class="modal">
         <div class="modal-content">
             <span class="close-modal">&times;</span>
@@ -462,7 +460,7 @@
     <!-- JavaScript -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Sample data
+
             const sampleRegistries = [
                 {
                     id: 1,
@@ -516,7 +514,6 @@
                 }
             ];
 
-            // DOM Elements
             const authSection = document.getElementById('auth-section');
             const registrySection = document.getElementById('registry-section');
             const registriesList = document.getElementById('registries-list');
@@ -537,12 +534,10 @@
             const registryPrivacy = document.getElementById('registry-privacy');
             const passwordField = document.getElementById('password-field');
 
-            // Initialize the app
             let currentUser = null;
             let registries = JSON.parse(localStorage.getItem('registries')) || [...sampleRegistries];
             let currentRegistryId = null;
 
-            // Check if user is logged in (for demo purposes)
             const isLoggedIn = localStorage.getItem('giftRegistryLoggedIn');
             if (isLoggedIn) {
                 currentUser = JSON.parse(localStorage.getItem('giftRegistryUser'));
@@ -550,16 +545,13 @@
                 renderRegistries();
             }
 
-            // Tab switching
             tabs.forEach(tab => {
                 tab.addEventListener('click', () => {
                     const tabId = tab.getAttribute('data-tab');
                     
-                    // Update active tab
                     tabs.forEach(t => t.classList.remove('active'));
                     tab.classList.add('active');
-                    
-                    // Update active content
+                
                     tabContents.forEach(content => {
                         content.classList.remove('active');
                         if (content.id === tabId) {
@@ -569,25 +561,21 @@
                 });
             });
 
-            // Show/hide password field based on privacy setting
             registryPrivacy.addEventListener('change', function() {
                 passwordField.style.display = this.value === 'password' ? 'block' : 'none';
             });
 
-            // Login form
             document.getElementById('login-form').addEventListener('submit', function(e) {
                 e.preventDefault();
                 const email = document.getElementById('login-email').value;
                 const password = document.getElementById('login-password').value;
                 
-                // Simple validation (in a real app, you would check against a database)
                 if (email && password) {
                     currentUser = {
                         email,
                         name: email.split('@')[0]
                     };
                     
-                    // Save to localStorage (for demo persistence)
                     localStorage.setItem('giftRegistryLoggedIn', 'true');
                     localStorage.setItem('giftRegistryUser', JSON.stringify(currentUser));
                     
@@ -598,7 +586,6 @@
                 }
             });
 
-            // Register form
             document.getElementById('register-form').addEventListener('submit', function(e) {
                 e.preventDefault();
                 const name = document.getElementById('register-name').value;
@@ -617,7 +604,7 @@
                         name
                     };
                     
-                    // Save to localStorage (for demo persistence)
+                
                     localStorage.setItem('giftRegistryLoggedIn', 'true');
                     localStorage.setItem('giftRegistryUser', JSON.stringify(currentUser));
                     
@@ -628,13 +615,11 @@
                 }
             });
 
-            // Show registry section after login
             function showRegistrySection() {
                 authSection.style.display = 'none';
                 registrySection.style.display = 'block';
             }
 
-            // Render registries list
             function renderRegistries() {
                 registriesList.innerHTML = '';
                 
@@ -664,7 +649,6 @@
                     registryCard.addEventListener('click', () => {
                         currentRegistryId = registry.id;
                         showRegistryDetails(registry.id);
-                        // Switch to gifts tab
                         document.querySelector('.tab[data-tab="gifts"]').click();
                     });
                     
@@ -672,7 +656,6 @@
                 });
             }
 
-            // Show registry details and gifts
             function showRegistryDetails(registryId) {
                 const registry = registries.find(r => r.id === registryId);
                 if (!registry) return;
@@ -687,14 +670,11 @@
                 currentRegistryName.textContent = registry.name;
                 currentRegistryDate.textContent = `Event Date: ${formattedDate}`;
                 
-                // Update share link
                 registryLink.value = `https://mygiftregistry.com/registry/${registry.id}`;
                 
-                // Render gifts
                 renderGifts(registry.gifts);
             }
 
-            // Render gifts
             function renderGifts(gifts = []) {
                 giftList.innerHTML = '';
                 
@@ -729,7 +709,6 @@
                     giftList.appendChild(giftItem);
                 });
                 
-                // Add event listeners to the new buttons
                 document.querySelectorAll('.gift-actions .btn').forEach(btn => {
                     btn.addEventListener('click', function() {
                         const giftId = parseInt(this.getAttribute('data-id'));
@@ -737,7 +716,7 @@
                         const gift = registry.gifts.find(g => g.id === giftId);
                         
                         if (this.textContent === 'Add to Cart') {
-                            // Mark as purchased
+                
                             gift.purchased = true;
                             saveRegistries();
                             renderGifts(registry.gifts);
@@ -747,13 +726,9 @@
                     });
                 });
             }
-
-            // Create registry modal
             createRegistryBtn.addEventListener('click', () => {
                 createRegistryModal.style.display = 'flex';
             });
-
-            // Add gift modal
             addGiftBtn.addEventListener('click', () => {
                 if (!currentRegistryId) {
                     alert('Please select a registry first');
@@ -761,8 +736,6 @@
                 }
                 addGiftModal.style.display = 'flex';
             });
-
-            // Share modal
             shareBtn.addEventListener('click', () => {
                 if (!currentRegistryId) {
                     alert('Please select a registry first');
@@ -770,8 +743,6 @@
                 }
                 shareModal.style.display = 'flex';
             });
-
-            // Close modals
             closeModals.forEach(closeBtn => {
                 closeBtn.addEventListener('click', () => {
                     createRegistryModal.style.display = 'none';
@@ -779,8 +750,6 @@
                     shareModal.style.display = 'none';
                 });
             });
-
-            // Close modal when clicking outside
             window.addEventListener('click', (e) => {
                 if (e.target === createRegistryModal) {
                     createRegistryModal.style.display = 'none';
@@ -792,8 +761,6 @@
                     shareModal.style.display = 'none';
                 }
             });
-
-            // Create registry form
             document.getElementById('create-registry-form').addEventListener('submit', function(e) {
                 e.preventDefault();
                 
@@ -813,16 +780,10 @@
                 
                 registries.push(newRegistry);
                 saveRegistries();
-                
-                // Reset form and close modal
                 this.reset();
                 createRegistryModal.style.display = 'none';
-                
-                // Refresh registries list
                 renderRegistries();
             });
-
-            // Add gift form
             document.getElementById('add-gift-form').addEventListener('submit', function(e) {
                 e.preventDefault();
                 
@@ -842,16 +803,10 @@
                 
                 registry.gifts.push(newGift);
                 saveRegistries();
-                
-                // Reset form and close modal
                 this.reset();
                 addGiftModal.style.display = 'none';
-                
-                // Refresh gifts list
                 renderGifts(registry.gifts);
             });
-
-            // Copy link functionality
             copyLinkBtn.addEventListener('click', () => {
                 registryLink.select();
                 document.execCommand('copy');
@@ -860,8 +815,6 @@
                     copyLinkBtn.textContent = 'Copy';
                 }, 2000);
             });
-
-            // Save registries to localStorage
             function saveRegistries() {
                 localStorage.setItem('registries', JSON.stringify(registries));
             }
