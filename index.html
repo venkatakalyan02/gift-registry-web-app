@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gift Registry</title>
+    <style>
+        /* CSS Styles */
+          :root {
+           --primary-color: #ff6b6b;
+            --secondary-color: #4ecdc4;
+            --dark-color: #292f36;
+            --light-color: #f7fff7;
+            --accent-color: #ffd166;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem 0;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            background: var(--primary-color);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 1rem;
+            margin: 0.5rem 0;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #ff5252;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--secondary-color);
+        }
+
+        .btn-secondary:hover {
+            background: #3dbeb6;
+        }
+
+        .auth-forms {
+            display: flex;
+            justify-content: center;
+            margin: 2rem 0;
+        }
+
+        .form-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .tab {
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab.active {
+            border-bottom: 3px solid var(--primary-color);
+            font-weight: bold;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .registry-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .gift-item {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .gift-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .gift-image {
+            height: 200px;
+            background-color: #eee;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .gift-details {
+            padding: 1rem;
+        }
+
+        .gift-title {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .gift-price {
+            color: var(--primary-color);
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .gift-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background-color: #eee;
+            border-radius: 4px;
+            margin: 0.5rem 0;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background-color: var(--secondary-color);
+            width: 0%;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .close-modal {
+            float: right;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 2rem;
+            background-color: var(--dark-color);
+            color: white;
+        }
+
+        .registry-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .registry-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .registry-card h3 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .registry-card p {
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            .registry-list {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HTML Structure -->
+    <header>
+        <div class="container">
+            <h1>Gift Registry</h1>
+            <p>Create and share your perfect wishlist</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Authentication Section -->
+        <section id="auth-section" class="auth-forms">
+            <div class="form-container">
+                <div class="tabs">
+                    <div class="tab active" data-tab="login">Login</div>
+                    <div class="tab" data-tab="register">Register</div>
+                </div>
+
+                <div id="login" class="tab-content active">
+                    <form id="login-form">
+                        <div class="form-group">
+                            <label for="login-email">Email</label>
+                            <input type="email" id="login-email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="login-password">Password</label>
+                            <input type="password" id="login-password" required>
+                        </div>
+                        <button type="submit" class="btn">Login</button>
+                    </form>
+                </div>
+
+                <div id="register" class="tab-content">
+                    <form id="register-form">
+                        <div class="form-group">
+                            <label for="register-name">Full Name</label>
+                            <input type="text" id="register-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="register-email">Email</label>
+                            <input type="email" id="register-email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="register-password">Password</label>
+                            <input type="password" id="register-password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="register-confirm">Confirm Password</label>
+                            <input type="password" id="register-confirm" required>
+                        </div>
+                        <button type="submit" class="btn">Register</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- Registry Section (Hidden until logged in) -->
+        <section id="registry-section" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin: 1rem 0;">
+                <h2>My Gift Registries</h2>
+                <button id="create-registry-btn" class="btn">Create New Registry</button>
+            </div>
+
+            <div class="tabs">
+                <div class="tab active" data-tab="registries">My Registries</div>
+                <div class="tab" data-tab="gifts">Gift Management</div>
+            </div>
+
+            <div id="registries" class="tab-content active">
+                <div id="registries-list">
+                    <!-- Registries will be added here dynamically -->
+                </div>
+            </div>
+
+            <div id="gifts" class="tab-content">
+                <div id="active-registry-info" style="margin-bottom: 1rem;">
+                    <h3 id="current-registry-name">No registry selected</h3>
+                    <p id="current-registry-date"></p>
+                    <div style="margin: 1rem 0;">
+                        <button id="share-btn" class="btn btn-secondary">Share Registry</button>
+                        <button id="add-gift-btn" class="btn">Add Gift</button>
+                    </div>
+                </div>
+
+                <div class="registry-list" id="gift-list">
+                    <!-- Gift items will be added here dynamically -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Create Registry Modal -->
+    <div id="create-registry-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Create New Registry</h2>
+            <form id="create-registry-form">
+                <div class="form-group">
+                    <label for="registry-name">Registry Name</label>
+                    <input type="text" id="registry-name" required placeholder="e.g., Wedding Registry">
+                </div>
+                <div class="form-group">
+                    <label for="registry-type">Registry Type</label>
+                    <select id="registry-type" required>
+                        <option value="">Select type</option>
+                        <option value="wedding">Wedding</option>
+                        <option value="birthday">Birthday</option>
+                        <option value="baby-shower">Baby Shower</option>
+                        <option value="anniversary">Anniversary</option>
+                        <option value="holiday">Holiday</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="registry-date">Event Date</label>
+                    <input type="date" id="registry-date" required>
+                </div>
+                <div class="form-group">
+                    <label for="registry-description">Description (Optional)</label>
+                    <textarea id="registry-description" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="registry-privacy">Privacy Settings</label>
+                    <select id="registry-privacy">
+                        <option value="public">Public (Anyone can view)</option>
+                        <option value="private">Private (Only with link)</option>
+                        <option value="password">Password Protected</option>
+                    </select>
+                </div>
+                <div class="form-group" id="password-field" style="display: none;">
+                    <label for="registry-password">Password</label>
+                    <input type="password" id="registry-password">
+                </div>
+                <button type="submit" class="btn">Create Registry</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Gift Modal -->
+    <div id="add-gift-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Add Gift to Registry</h2>
+            <form id="add-gift-form">
+                <div class="form-group">
+                    <label for="gift-name">Gift Name</label>
+                    <input type="text" id="gift-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="gift-price">Price</label>
+                    <input type="number" id="gift-price" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="gift-description">Description</label>
+                    <input type="text" id="gift-description">
+                </div>
+                <div class="form-group">
+                    <label for="gift-image">Image URL</label>
+                    <input type="url" id="gift-image">
+                </div>
+                <div class="form-group">
+                    <label for="gift-priority">Priority</label>
+                    <select id="gift-priority">
+                        <option value="high">High</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="low">Low</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="gift-quantity">Quantity Needed</label>
+                    <input type="number" id="gift-quantity" value="1" min="1">
+                </div>
+                <button type="submit" class="btn">Add Gift</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Share Modal -->
+    <div id="share-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Share Your Registry</h2>
+            <p>Share this link with friends and family:</p>
+            <div style="display: flex; margin: 1rem 0;">
+                <input type="text" id="registry-link" style="flex: 1; padding: 0.5rem;" readonly>
+                <button id="copy-link-btn" class="btn">Copy</button>
+            </div>
+            <div>
+                <p>Or share directly:</p>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button class="btn btn-secondary">Email</button>
+                    <button class="btn btn-secondary">Facebook</button>
+                    <button class="btn btn-secondary">WhatsApp</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Gift Registry. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Sample data
+            const sampleRegistries = [
+                {
+                    id: 1,
+                    name: "Wedding Registry",
+                    type: "wedding",
+                    date: "2025-04-15",
+                    description: "Our dream wedding gifts",
+                    privacy: "public",
+                    gifts: [
+                        {
+                            id: 1,
+                            name: "KitchenAid Stand Mixer",
+                            price: 299.99,
+                            description: "Professional 5-quart stand mixer",
+                            image: "https://images.unsplash.com/photo-1589985270826-4b7bb135bc9d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+                            priority: "high",
+                            quantity: 1,
+                            purchased: false
+                        },
+                        {
+                            id: 2,
+                            name: "Air Fryer",
+                            price: 129.99,
+                            description: "6-quart digital air fryer",
+                            image: "https://media.istockphoto.com/id/1485969458/photo/black-airfryer-isolated-white-background.jpg?s=612x612&w=0&k=20&c=m9yvbidPXddHIlCcndPuGeNYGAl1Zxy1n4nGpoCiiRw=",
+                            priority: "medium",
+                            quantity: 1,
+                            purchased: false
+                        }
+                    ]
+                },
+                {
+                    id: 2,
+                    name: "birthday",
+                    type: "birthday",
+                    date: "2025-04-20",
+                    description: "Welcome our little one",
+                    privacy: "private",
+                    gifts: [
+                        {
+                            id: 3,
+                            name: "Baby Monitor",
+                            price: 89.99,
+                            description: "Smart baby monitor with camera",
+                            image: "https://media.istockphoto.com/id/1411295980/photo/cute-little-baby-boy-sleeping-on-bed-at-home-with-baby-monitor-camera.jpg?s=612x612&w=0&k=20&c=uxZ3vOs_6Fkb9YFJH_73dalLOg3NmVzwFo8X8OhD2_E=",
+                            priority: "high",
+                            quantity: 1,
+                            purchased: true
+                        }
+                    ]
+                }
+            ];
+
+            // DOM Elements
+            const authSection = document.getElementById('auth-section');
+            const registrySection = document.getElementById('registry-section');
+            const registriesList = document.getElementById('registries-list');
+            const giftList = document.getElementById('gift-list');
+            const createRegistryModal = document.getElementById('create-registry-modal');
+            const addGiftModal = document.getElementById('add-gift-modal');
+            const shareModal = document.getElementById('share-modal');
+            const createRegistryBtn = document.getElementById('create-registry-btn');
+            const addGiftBtn = document.getElementById('add-gift-btn');
+            const shareBtn = document.getElementById('share-btn');
+            const closeModals = document.querySelectorAll('.close-modal');
+            const copyLinkBtn = document.getElementById('copy-link-btn');
+            const registryLink = document.getElementById('registry-link');
+            const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+            const currentRegistryName = document.getElementById('current-registry-name');
+            const currentRegistryDate = document.getElementById('current-registry-date');
+            const registryPrivacy = document.getElementById('registry-privacy');
+            const passwordField = document.getElementById('password-field');
+
+            // Initialize the app
+            let currentUser = null;
+            let registries = JSON.parse(localStorage.getItem('registries')) || [...sampleRegistries];
+            let currentRegistryId = null;
+
+            // Check if user is logged in (for demo purposes)
+            const isLoggedIn = localStorage.getItem('giftRegistryLoggedIn');
+            if (isLoggedIn) {
+                currentUser = JSON.parse(localStorage.getItem('giftRegistryUser'));
+                showRegistrySection();
+                renderRegistries();
+            }
+
+            // Tab switching
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabId = tab.getAttribute('data-tab');
+                    
+                    // Update active tab
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    // Update active content
+                    tabContents.forEach(content => {
+                        content.classList.remove('active');
+                        if (content.id === tabId) {
+                            content.classList.add('active');
+                        }
+                    });
+                });
+            });
+
+            // Show/hide password field based on privacy setting
+            registryPrivacy.addEventListener('change', function() {
+                passwordField.style.display = this.value === 'password' ? 'block' : 'none';
+            });
+
+            // Login form
+            document.getElementById('login-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const email = document.getElementById('login-email').value;
+                const password = document.getElementById('login-password').value;
+                
+                // Simple validation (in a real app, you would check against a database)
+                if (email && password) {
+                    currentUser = {
+                        email,
+                        name: email.split('@')[0]
+                    };
+                    
+                    // Save to localStorage (for demo persistence)
+                    localStorage.setItem('giftRegistryLoggedIn', 'true');
+                    localStorage.setItem('giftRegistryUser', JSON.stringify(currentUser));
+                    
+                    showRegistrySection();
+                    renderRegistries();
+                } else {
+                    alert('Please enter both email and password');
+                }
+            });
+
+            // Register form
+            document.getElementById('register-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const name = document.getElementById('register-name').value;
+                const email = document.getElementById('register-email').value;
+                const password = document.getElementById('register-password').value;
+                const confirm = document.getElementById('register-confirm').value;
+                
+                if (password !== confirm) {
+                    alert('Passwords do not match');
+                    return;
+                }
+                
+                if (name && email && password) {
+                    currentUser = {
+                        email,
+                        name
+                    };
+                    
+                    // Save to localStorage (for demo persistence)
+                    localStorage.setItem('giftRegistryLoggedIn', 'true');
+                    localStorage.setItem('giftRegistryUser', JSON.stringify(currentUser));
+                    
+                    showRegistrySection();
+                    renderRegistries();
+                } else {
+                    alert('Please fill in all fields');
+                }
+            });
+
+            // Show registry section after login
+            function showRegistrySection() {
+                authSection.style.display = 'none';
+                registrySection.style.display = 'block';
+            }
+
+            // Render registries list
+            function renderRegistries() {
+                registriesList.innerHTML = '';
+                
+                if (registries.length === 0) {
+                    registriesList.innerHTML = '<p>You have no registries yet. Create one to get started!</p>';
+                    return;
+                }
+                
+                registries.forEach(registry => {
+                    const registryCard = document.createElement('div');
+                    registryCard.className = 'registry-card';
+                    registryCard.setAttribute('data-id', registry.id);
+                    
+                    const eventDate = new Date(registry.date);
+                    const formattedDate = eventDate.toLocaleDateString('en-US', { 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric' 
+                    });
+                    
+                    registryCard.innerHTML = `
+                        <h3>${registry.name}</h3>
+                        <p>${formattedDate} • ${registry.type.replace('-', ' ')}</p>
+                        <p>${registry.gifts.length} items • ${registry.gifts.filter(g => g.purchased).length} purchased</p>
+                    `;
+                    
+                    registryCard.addEventListener('click', () => {
+                        currentRegistryId = registry.id;
+                        showRegistryDetails(registry.id);
+                        // Switch to gifts tab
+                        document.querySelector('.tab[data-tab="gifts"]').click();
+                    });
+                    
+                    registriesList.appendChild(registryCard);
+                });
+            }
+
+            // Show registry details and gifts
+            function showRegistryDetails(registryId) {
+                const registry = registries.find(r => r.id === registryId);
+                if (!registry) return;
+                
+                const eventDate = new Date(registry.date);
+                const formattedDate = eventDate.toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                });
+                
+                currentRegistryName.textContent = registry.name;
+                currentRegistryDate.textContent = `Event Date: ${formattedDate}`;
+                
+                // Update share link
+                registryLink.value = `https://mygiftregistry.com/registry/${registry.id}`;
+                
+                // Render gifts
+                renderGifts(registry.gifts);
+            }
+
+            // Render gifts
+            function renderGifts(gifts = []) {
+                giftList.innerHTML = '';
+                
+                if (gifts.length === 0) {
+                    giftList.innerHTML = '<p>No gifts added to this registry yet.</p>';
+                    return;
+                }
+                
+                gifts.forEach(gift => {
+                    const giftItem = document.createElement('div');
+                    giftItem.className = 'gift-item';
+                    
+                    const purchasedClass = gift.purchased ? 'purchased' : '';
+                    const purchasedText = gift.purchased ? 'Purchased!' : 'Add to Cart';
+                    
+                    giftItem.innerHTML = `
+                        <div class="gift-image" style="background-image: url('${gift.image || 'https://via.placeholder.com/300x200?text=No+Image'}')"></div>
+                        <div class="gift-details">
+                            <h3 class="gift-title">${gift.name}</h3>
+                            <p class="gift-price">$${gift.price.toFixed(2)}</p>
+                            <p>${gift.description}</p>
+                            <div class="progress-bar">
+                                <div class="progress" style="width: ${gift.purchased ? '100' : '0'}%"></div>
+                            </div>
+                            <div class="gift-actions">
+                                <button class="btn ${purchasedClass}" data-id="${gift.id}">${purchasedText}</button>
+                                <button class="btn btn-secondary" data-id="${gift.id}">Details</button>
+                            </div>
+                        </div>
+                    `;
+                    
+                    giftList.appendChild(giftItem);
+                });
+                
+                // Add event listeners to the new buttons
+                document.querySelectorAll('.gift-actions .btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const giftId = parseInt(this.getAttribute('data-id'));
+                        const registry = registries.find(r => r.id === currentRegistryId);
+                        const gift = registry.gifts.find(g => g.id === giftId);
+                        
+                        if (this.textContent === 'Add to Cart') {
+                            // Mark as purchased
+                            gift.purchased = true;
+                            saveRegistries();
+                            renderGifts(registry.gifts);
+                        } else if (this.textContent === 'Details') {
+                            alert(`Gift Details:\n\nName: ${gift.name}\nPrice: $${gift.price.toFixed(2)}\nDescription: ${gift.description}\nPriority: ${gift.priority}\nQuantity: ${gift.quantity}`);
+                        }
+                    });
+                });
+            }
+
+            // Create registry modal
+            createRegistryBtn.addEventListener('click', () => {
+                createRegistryModal.style.display = 'flex';
+            });
+
+            // Add gift modal
+            addGiftBtn.addEventListener('click', () => {
+                if (!currentRegistryId) {
+                    alert('Please select a registry first');
+                    return;
+                }
+                addGiftModal.style.display = 'flex';
+            });
+
+            // Share modal
+            shareBtn.addEventListener('click', () => {
+                if (!currentRegistryId) {
+                    alert('Please select a registry first');
+                    return;
+                }
+                shareModal.style.display = 'flex';
+            });
+
+            // Close modals
+            closeModals.forEach(closeBtn => {
+                closeBtn.addEventListener('click', () => {
+                    createRegistryModal.style.display = 'none';
+                    addGiftModal.style.display = 'none';
+                    shareModal.style.display = 'none';
+                });
+            });
+
+            // Close modal when clicking outside
+            window.addEventListener('click', (e) => {
+                if (e.target === createRegistryModal) {
+                    createRegistryModal.style.display = 'none';
+                }
+                if (e.target === addGiftModal) {
+                    addGiftModal.style.display = 'none';
+                }
+                if (e.target === shareModal) {
+                    shareModal.style.display = 'none';
+                }
+            });
+
+            // Create registry form
+            document.getElementById('create-registry-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const newRegistry = {
+                    id: registries.length > 0 ? Math.max(...registries.map(r => r.id)) + 1 : 1,
+                    name: document.getElementById('registry-name').value,
+                    type: document.getElementById('registry-type').value,
+                    date: document.getElementById('registry-date').value,
+                    description: document.getElementById('registry-description').value,
+                    privacy: document.getElementById('registry-privacy').value,
+                    gifts: []
+                };
+                
+                if (newRegistry.privacy === 'password') {
+                    newRegistry.password = document.getElementById('registry-password').value;
+                }
+                
+                registries.push(newRegistry);
+                saveRegistries();
+                
+                // Reset form and close modal
+                this.reset();
+                createRegistryModal.style.display = 'none';
+                
+                // Refresh registries list
+                renderRegistries();
+            });
+
+            // Add gift form
+            document.getElementById('add-gift-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const registry = registries.find(r => r.id === currentRegistryId);
+                if (!registry) return;
+                
+                const newGift = {
+                    id: registry.gifts.length > 0 ? Math.max(...registry.gifts.map(g => g.id)) + 1 : 1,
+                    name: document.getElementById('gift-name').value,
+                    price: parseFloat(document.getElementById('gift-price').value),
+                    description: document.getElementById('gift-description').value,
+                    image: document.getElementById('gift-image').value,
+                    priority: document.getElementById('gift-priority').value,
+                    quantity: parseInt(document.getElementById('gift-quantity').value),
+                    purchased: false
+                };
+                
+                registry.gifts.push(newGift);
+                saveRegistries();
+                
+                // Reset form and close modal
+                this.reset();
+                addGiftModal.style.display = 'none';
+                
+                // Refresh gifts list
+                renderGifts(registry.gifts);
+            });
+
+            // Copy link functionality
+            copyLinkBtn.addEventListener('click', () => {
+                registryLink.select();
+                document.execCommand('copy');
+                copyLinkBtn.textContent = 'Copied!';
+                setTimeout(() => {
+                    copyLinkBtn.textContent = 'Copy';
+                }, 2000);
+            });
+
+            // Save registries to localStorage
+            function saveRegistries() {
+                localStorage.setItem('registries', JSON.stringify(registries));
+            }
+        });
+    </script>
+</body>
+</html>
